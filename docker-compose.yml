@@ -1,0 +1,36 @@
+version: '3.3'
+
+services:
+  web:
+    build:
+      context: docker
+    volumes:
+      - ./:/var/www/html
+    ports:
+    - 88:80
+    links:
+      - db
+    networks:
+      - internal
+
+  db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    restart: always
+    volumes:
+      - ./database/data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - internal
+networks:
+  internal:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.229.0/28
